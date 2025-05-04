@@ -56,7 +56,7 @@ public class SearchRepository : ISearchRepository
             Countries = new List<CountryInfoDto>()
         };
 
-        var sql = @"SELECT c.Name as CountryName FROM Currency cu
+        var sql = @"SELECT co.Name as CountryName FROM Currency cu
                     JOIN Currency_Country cc ON cu.Id = cc.Currency_Id
                     JOIN Country co ON co.Id = cc.Country_Id
                     WHERE cu.Name = @countryName";

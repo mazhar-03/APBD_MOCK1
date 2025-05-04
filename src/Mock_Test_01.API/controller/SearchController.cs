@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Mock_Test_01.Application;
+using Mock_Test_01.Models;
 
 namespace Mock_Test_01.API.controller;
 
@@ -42,11 +43,8 @@ public class SearchController : ControllerBase
                 return Results.NotFound("Currency not found or no countries using it.");
             }
 
-            return Results.Ok(new
-            {
-                CurrencyName = query,
-                Countries = result.Countries
-            });
+            var countryNames = result.Countries.Select(c => c.CountryName).ToList();
+            return Results.Ok(countryNames);
         }
         else
         {
