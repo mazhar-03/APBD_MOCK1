@@ -81,4 +81,132 @@ public class SearchRepository : ISearchRepository
 
         return result;
     }
+
+    public Currency GetCurrencyByName(string currencyName)
+    {
+        var sql = "SELECT * FROM Currency WHERE Name = @currencyName";
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@currencyName", currencyName);
+            var reader = command.ExecuteReader();
+            if (reader.HasRows)
+                while (reader.Read())
+                    return new Currency
+                    (
+                        reader.GetInt32(0),
+                        reader.GetString(1),
+                        reader.GetDouble(2)
+                    );
+        }
+
+        return null;
+    }
+
+    public bool CurrencyExists(string currencyName)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            var query = "SELECT COUNT(1) FROM Currency WHERE Name = @CurrencyName";
+
+            using (var cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@CurrencyName", currencyName);
+                return (int)cmd.ExecuteScalar() > 0;
+            }
+        }
+    }
+
+
+    public void UpdateCurrency(int currencyId, float rate)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            var query = "UPDATE Currency SET Rate = @Rate WHERE Id = @CurrencyId";
+            using (var cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@Rate", rate);
+                cmd.Parameters.AddWithValue("@CurrencyId", currencyId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public void LinkCurrencyWithCountries(int currencyId, List<string> countryNames)
+    {
+        foreach (var countryName in countryNames)
+        {
+            var countryId = GetCountryIdByName(countryName);
+            if (countryId == -1) throw new ArgumentException($"Country '{countryName}' does not exist.");
+
+            InsertCurrencyCountryLink(currencyId, countryId);
+        }
+    }
+
+    public void CreateOrUpdateCurrency(string currencyName, float rate, List<string> countryNames)
+    {
+        var existingCurrency = GetCurrencyByName(currencyName);
+        if (existingCurrency != null)
+        {
+        }
+    }
+
+    public int InsertCurrency(string currencyName, float rate)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            var query = "INSERT INTO Currency (Name, Rate) VALUES (@CurrencyName, @Rate); SELECT SCOPE_IDENTITY();";
+
+            using (var cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@CurrencyName", currencyName);
+                cmd.Parameters.AddWithValue("@Rate", rate);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+    }
+
+    public int GetCountryIdByName(string countryName)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            var query = "SELECT Id FROM Country WHERE Name = @CountryName";
+
+            using (var cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@CountryName", countryName);
+                var result = cmd.ExecuteScalar();
+
+                if (result != null) return Convert.ToInt32(result);
+
+                return -1;
+            }
+        }
+    }
+
+    public void InsertCurrencyCountryLink(int currencyId, int countryId)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            var query = @"
+            INSERT INTO Currency_Country (Currency_Id, Country_Id)
+            VALUES (@CurrencyId, @CountryId)";
+
+            using (var cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@CurrencyId", currencyId);
+                cmd.Parameters.AddWithValue("@CountryId", countryId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
 }
