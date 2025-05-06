@@ -31,7 +31,8 @@ public class SearchController : ControllerBase
 
             return Results.Ok(new
             {
-                CountryName = type, result.Currencies
+                CountryName = query,
+                result.Currencies
             });
         }
 

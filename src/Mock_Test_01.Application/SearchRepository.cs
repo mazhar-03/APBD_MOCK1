@@ -49,23 +49,7 @@ namespace Mock_Test_01.Application
 
             return result;
         }
-
-        // Check if currency already exists in the database
-        public bool CurrencyExists(string currencyName)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                string query = "SELECT COUNT(1) FROM Currency WHERE Name = @CurrencyName";
-
-                using (var cmd = new SqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@CurrencyName", currencyName);
-                    return (int)cmd.ExecuteScalar() > 0;
-                }
-            }
-        }
-
+        
         // Get list of countries for a given currency
         public CurrencyCountriesDto GetCountriesForCurrency(string currencyName)
         {
@@ -103,6 +87,23 @@ namespace Mock_Test_01.Application
             return result;
         }
 
+
+        // Check if currency already exists in the database
+        public bool CurrencyExists(string currencyName)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                string query = "SELECT COUNT(1) FROM Currency WHERE Name = @CurrencyName";
+
+                using (var cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@CurrencyName", currencyName);
+                    return (int)cmd.ExecuteScalar() > 0;
+                }
+            }
+        }
+        
         // Get a currency by its name
         public Currency GetCurrencyByName(string currencyName)
         {
