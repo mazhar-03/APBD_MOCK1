@@ -3,6 +3,6 @@
 public class CurrencyRequestDto
 {
     public string CurrencyName { get; set; }
-    public float Rate { get; set; }
+    public double Rate { get; set; }
     public List<string> Countries { get; set; }
 }

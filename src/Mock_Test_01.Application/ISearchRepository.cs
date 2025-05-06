@@ -7,9 +7,10 @@ public interface ISearchRepository
     CountryDto GetCurrenciesForCountry(string countryName);
     CurrencyCountriesDto GetCountriesForCurrency(string currencyName);
     Currency GetCurrencyByName(string currencyName);
-    void CreateOrUpdateCurrency(string currencyName, float rate, List<string> countryNames);
-    void UpdateCurrency(int currencyId, float rate);
+    void CreateOrUpdateCurrency(string currencyName, double rate, List<string> countryNames);
+    void UpdateCurrency(int currencyId, double rate);
     bool CurrencyExists(string currencyName);
     void LinkCurrencyWithCountries(int currencyId, List<string> countryNames);
-    int InsertCurrency(string currencyName, float rate);
+    int InsertCurrency(string currencyName, double rate);
+    int GetCountryIdByName(string countryName);
 }

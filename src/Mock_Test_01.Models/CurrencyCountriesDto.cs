@@ -3,9 +3,8 @@
 public class CurrencyCountriesDto
 {
     public string CurrencyName { get; set; }
-    public IEnumerable<CountryInfoDto> Countries { get; set; }
+    public List<CountryInfoDto> Countries { get; set; } = new List<CountryInfoDto>(); 
 }
-
 public class CountryInfoDto
 {
     public string CountryName { get; set; }
